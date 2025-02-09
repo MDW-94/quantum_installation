@@ -44,7 +44,7 @@ function animate(time) {
   meshTrackY2 = Math.sin(time / 1500) * -25;
   meshTrackZ2 = Math.sin(time / 2000) * -25;
 
-  const linePos = geometry2.attributes.position;
+  const linePos = line.geometry.attributes.position;
 
   // line vertex 1: XYZ
   linePos.array[0] = meshTrackX;
