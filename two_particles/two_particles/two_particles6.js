@@ -32,10 +32,11 @@ camera.lookAt(0, 0, 0);
 
 let meshTrackX, meshTrackY, meshTrackZ;
 let meshTrackX2, meshTrackY2, meshTrackZ2;
+const linePos = line.geometry.attributes.position;
 
 function animate(time) {
   // Vector Seed 1
-  meshTrackX = Math.sin(time / 1000) * 25;
+  meshTrackX = Math.sin(time / 1000) * 25 + 25;
   meshTrackY = Math.sin(time / 1500) * 25;
   meshTrackZ = Math.sin(time / 2000) * 25;
 
@@ -44,17 +45,15 @@ function animate(time) {
   meshTrackY2 = Math.sin(time / 1500) * -25;
   meshTrackZ2 = Math.sin(time / 2000) * -25;
 
-  const linePos = line.geometry.attributes.position;
-
   // line vertex 1: XYZ
   linePos.array[0] = meshTrackX;
   linePos.array[1] = meshTrackY;
   linePos.array[2] = meshTrackZ;
 
   // middle point
-  linePos.array[3] = 0;
-  linePos.array[4] = 0;
-  linePos.array[5] = 0;
+  linePos.array[3] = Math.sin(time / 2000) * 25;
+  linePos.array[4] = Math.sin(time / 2500) * -25;
+  linePos.array[5] = Math.sin(time / 3000) * 25;
 
   // line vertex 2: XYZ
   linePos.array[6] = meshTrackX2;
@@ -72,8 +71,15 @@ function animate(time) {
   // Sphere 2: Red Sphere
   redSphere.position.set(linePos.array[6], linePos.array[7], linePos.array[8]);
 
+  redSphere.rotation.x = time / 5000;
+  redSphere.rotation.y = time / 10000;
+
   // Light
   directionalLight.position.setX(Math.sin(time / 1500));
+  // directionalLight.position.setY(Math.sin((time / 1000)));
+
+  camera.position.setY(Math.sin(time / 20000) * 10);
+  camera.position.setX(Math.sin(time / 20000) * 10);
 
   renderer.render(scene, camera);
 }
