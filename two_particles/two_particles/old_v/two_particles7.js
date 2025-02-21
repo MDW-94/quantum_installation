@@ -61,67 +61,59 @@ function animate(time) {
   sphere2XYZ.y = oscillate((time * 0.8) / 2750, height / 15) * -1;
   sphere2XYZ.z = oscillate((time * 0.99) / 2750, depth / 12.5) * -1;
 
-  // for (let i = 0; i < lineNodes.length; i++) {
-  //   // First point:
-  //   if (i < 3) {
-  //     switch (i % 3) {
-  //       case 0:
-  //         lineNodes[i] = sphere1XYZ.x;
-  //         break;
-  //       case 1:
-  //         lineNodes[i] = sphere1XYZ.y;
-  //         break;
-  //       case 2:
-  //         lineNodes[i] = sphere1XYZ.z;
-  //         break;
-  //     }
-  //   }
+  for (let i = 0; i < lineNodes.length; i++) {
+    // First point:
+    if (i < 3) {
+      switch (i % 3) {
+        case 0:
+          lineNodes[i] = sphere1XYZ.x;
+          break;
+        case 1:
+          lineNodes[i] = sphere1XYZ.y;
+          break;
+        case 2:
+          lineNodes[i] = sphere1XYZ.z;
+          break;
+      }
+    }
 
-  //   if (i > 3 && i < lineNodes.length - 4) {
-  //     switch (i % 3) {
-  //       case 0:
-  //         lineNodes[i] = oscillate(
-  //           time * 0.009,
-  //           oscillate(time * 0.0005, sphere1XYZ.x + sphere2XYZ.x)
-  //         );
-  //         break;
-  //       case 1:
-  //         lineNodes[i] = oscillate(
-  //           time * 0.009,
-  //           oscillate(time * 0.0009, sphere1XYZ.y + sphere2XYZ.y)
-  //         );
-  //         break;
-  //       case 2:
-  //         lineNodes[i] = oscillate(
-  //           time * 0.009,
-  //           oscillate(time * 0.0005, sphere1XYZ.z + sphere2XYZ.z)
-  //         );
-  //         break;
-  //     }
-  //   }
+    if (i > 3 && i < lineNodes.length - 4) {
+      switch (i % 3) {
+        case 0:
+          lineNodes[i] = oscillate(
+            time * 0.009,
+            oscillate(time * 0.0005, sphere1XYZ.x + sphere2XYZ.x)
+          );
+          break;
+        case 1:
+          lineNodes[i] = oscillate(
+            time * 0.009,
+            oscillate(time * 0.0009, sphere1XYZ.y + sphere2XYZ.y)
+          );
+          break;
+        case 2:
+          lineNodes[i] = oscillate(
+            time * 0.009,
+            oscillate(time * 0.0005, sphere1XYZ.z + sphere2XYZ.z)
+          );
+          break;
+      }
+    }
 
-  //   // End point:
-  //   if (i > lineNodes.length - 4) {
-  //     switch (i % 3) {
-  //       case 0:
-  //         lineNodes[i] = sphere2XYZ.x;
-  //         break;
-  //       case 1:
-  //         lineNodes[i] = sphere2XYZ.y;
-  //         break;
-  //       case 2:
-  //         lineNodes[i] = sphere2XYZ.z;
-  //         break;
-  //     }
-  //   }
-  // }
-
-  for (let i = 0; i < lineNodes.length; i += 3) {
-    let t = i / lineNodes.length; // Normalized position (0 to 1)
-
-    lineNodes[i] = THREE.MathUtils.lerp(sphere1XYZ.x, sphere2XYZ.x, t);
-    lineNodes[i + 1] = THREE.MathUtils.lerp(sphere1XYZ.y, sphere2XYZ.y, t);
-    lineNodes[i + 2] = THREE.MathUtils.lerp(sphere1XYZ.z, sphere2XYZ.z, t);
+    // End point:
+    if (i > lineNodes.length - 4) {
+      switch (i % 3) {
+        case 0:
+          lineNodes[i] = sphere2XYZ.x;
+          break;
+        case 1:
+          lineNodes[i] = sphere2XYZ.y;
+          break;
+        case 2:
+          lineNodes[i] = sphere2XYZ.z;
+          break;
+      }
+    }
   }
 
   linePos.needsUpdate = true; // important for line geom to appear in motion
