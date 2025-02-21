@@ -1,5 +1,5 @@
-import { createSphere } from "./components/sphere";
-import { createLine } from "./components/line";
+import { createSphere } from "../components/sphere";
+import { createLine } from "../components/line";
 import * as THREE from "three";
 
 // Setup -----------
