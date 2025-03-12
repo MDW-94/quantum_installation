@@ -11,10 +11,13 @@ const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 
 // Sphere 1 --------
-const greySphere = createSphere(0x4b99e9);
+const greySphere = createSphere(0x4b99e9, 30, 4);
 
 // Sphere 2 ---------
-const redSphere = createSphere(0xd74776);
+const redSphere = createSphere(0xd74776, 30, 4);
+
+// Sphere 3 ---------
+const tinySphere = createSphere(0xd74776, 10, 2);
 
 // Line -----------
 const line = createLine(0xf5f5f5);
@@ -22,7 +25,7 @@ const line = createLine(0xf5f5f5);
 // ----------
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
 
-scene.add(greySphere, redSphere, line, directionalLight);
+scene.add(greySphere, redSphere, tinySphere, line, directionalLight);
 
 renderer.setSize(width, height);
 
@@ -41,6 +44,12 @@ const sphere1XYZ = {
 };
 
 const sphere2XYZ = {
+  x: 0,
+  y: 0,
+  z: 0,
+};
+
+const tinySphereXYZ = {
   x: 0,
   y: 0,
   z: 0,
@@ -80,6 +89,19 @@ function animate(time) {
   // Sphere 2: Red Sphere: set to end point of curve
   redSphere.position.set(sphere1XYZ.x, sphere1XYZ.y, sphere1XYZ.z);
 
+  const index = 1;
+
+  tinySphere.position.set(
+    lineNodes[index],
+    lineNodes[index + 1],
+    lineNodes[index + 2]
+  );
+
+  tinySphere.position.set(
+    linePos.getX(index / 3) / 2,
+    linePos.getY(index / 3) / 2,
+    linePos.getZ(index / 3) / 2
+  );
   // redSphere.rotation.x = time / 5000;
   // redSphere.rotation.y = time / 10000;
 
