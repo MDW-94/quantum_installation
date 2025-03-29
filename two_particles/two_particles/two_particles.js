@@ -24,6 +24,7 @@ const line = createLine(0xf5f5f5);
 
 // ----------
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+directionalLight.position.set(0, 5, 10);
 
 scene.add(greySphere, redSphere, tinySphere, line, directionalLight);
 
@@ -59,16 +60,20 @@ function oscillate(time, range) {
   return Math.sin(time * Math.PI * 0.5) * (range / 2);
 }
 
+function oscillate2(time, range) {
+  return Math.cos(time * Math.PI * 0.5) * (range / 2);
+}
+
 function animate(time) {
   // Sphere1 XYZ:
-  sphere1XYZ.x = oscillate((time * 0.79) / 2750, width / 15);
+  sphere1XYZ.x = oscillate((time * 0.79) / 2750, width / 17.4);
   sphere1XYZ.y = oscillate((time * 1) / 2750, height / 17.5);
   sphere1XYZ.z = oscillate((time * 1.19) / 2750, depth / 12.5);
 
   // Sphere2 XYZ:
-  sphere2XYZ.x = oscillate((time * 1.39) / 2750, width / 17.5) * -1;
-  sphere2XYZ.y = oscillate((time * 0.8) / 2750, height / 15) * -1;
-  sphere2XYZ.z = oscillate((time * 0.99) / 2750, depth / 12.5) * -1;
+  sphere2XYZ.x = oscillate2((time * 0.8) / 2749, width / 17.5) * -1;
+  sphere2XYZ.y = oscillate2((time * 0.9) / 2751, height / 16) * -1;
+  sphere2XYZ.z = oscillate2((time * 1.09) / 2751, depth / 12.4) * -1;
 
   for (let i = 0; i < lineNodes.length; i += 3) {
     let t = i / lineNodes.length; // Normalized position (0 to 1)
@@ -83,27 +88,20 @@ function animate(time) {
   // Sphere 1: Grey Sphere: set to beginning of curve
   greySphere.position.set(sphere2XYZ.x, sphere2XYZ.y, sphere2XYZ.z);
 
-  // greySphere.rotation.x = time / 5000;
-  // greySphere.rotation.y = time / 10000;
-
   // Sphere 2: Red Sphere: set to end point of curve
   redSphere.position.set(sphere1XYZ.x, sphere1XYZ.y, sphere1XYZ.z);
 
   const index = 1;
 
-  tinySphere.position.set(
-    lineNodes[index],
-    lineNodes[index + 1],
-    lineNodes[index + 2]
-  );
+  let orbitRadius = width / 1000;
+
+  let angle = time / 1000;
 
   tinySphere.position.set(
-    linePos.getX(index / 3) / 2,
-    linePos.getY(index / 3) / 2,
-    linePos.getZ(index / 3) / 2
+    lineNodes[index] + Math.sin(angle) * orbitRadius,
+    lineNodes[index + 1] + Math.sin(angle) * orbitRadius,
+    lineNodes[index + 2] + Math.sin(angle) * orbitRadius
   );
-  // redSphere.rotation.x = time / 5000;
-  // redSphere.rotation.y = time / 10000;
 
   // Light
   // directionalLight.position.setX(Math.sin(time / 1500));
