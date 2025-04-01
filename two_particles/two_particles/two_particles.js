@@ -26,7 +26,7 @@ const line = createLine(0xf5f5f5);
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
 directionalLight.position.set(0, 5, 10);
 
-scene.add(greySphere, redSphere, tinySphere, line, directionalLight);
+scene.add(greySphere, redSphere, line, directionalLight);
 
 renderer.setSize(width, height);
 
@@ -64,6 +64,8 @@ function oscillate2(time, range) {
   return Math.cos(time * Math.PI * 0.5) * (range / 2);
 }
 
+let r = Math.PI * 2;
+
 function animate(time) {
   // Sphere1 XYZ:
   sphere1XYZ.x = oscillate((time * 0.79) / 2750, width / 17.4);
@@ -90,6 +92,15 @@ function animate(time) {
 
   // Sphere 2: Red Sphere: set to end point of curve
   redSphere.position.set(sphere1XYZ.x, sphere1XYZ.y, sphere1XYZ.z);
+
+  greySphere.rotation.x = time / 2000;
+  redSphere.rotation.x = time / 2001;
+  greySphere.rotation.y = time / 2999;
+  redSphere.rotation.y = time / 1999;
+  greySphere.rotation.z = time / 1998;
+  redSphere.rotation.z = time / 2999;
+
+  directionalLight.position.set(Math.cos(r) * 10, 2, Math.sin(r) * 10);
 
   const index = 1;
 
