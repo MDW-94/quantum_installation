@@ -326,8 +326,6 @@ Vertex Shader – Controls the position of each point (vertex) of an object.
 
 Fragment Shader – Controls the color of each pixel of the object.
 
-[ln 264]()
-
 <hr/>
 
 What is this code doing?
@@ -348,6 +346,7 @@ const material = new ShaderMaterial({});
 
 This tells Three.js that we're creating a custom material that will use our own shaders instead of the built-in ones.
 `
+
 Step 2: Defining Uniforms
 
 ```javascript
@@ -412,6 +411,7 @@ gl_Position = projectionMatrix \* modelViewPosition;
 
 <code>gl_Position</code> is a special built-in variable that tells OpenGL where to place the vertex on the screen.
 
+<hr/>
 Fragment Shader (Controls Pixel Colors)
 
 ```javascript

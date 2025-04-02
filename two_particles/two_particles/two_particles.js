@@ -21,13 +21,13 @@ const redSphere = createSphere("red", 30, 4);
 const tinySphere = createSphere("red", 10, 2);
 
 // Line -----------
-const line = createLine(0xf5f5f5);
+const line = createLine();
 
 // ----------
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
 directionalLight.position.set(0, 5, 10);
 
-scene.add(greySphere.sphere, redSphere.sphere, line, directionalLight);
+scene.add(greySphere.sphere, redSphere.sphere, line.line, directionalLight);
 
 renderer.setSize(width, height);
 
@@ -37,7 +37,7 @@ camera.position.set(0, 0, 75);
 camera.lookAt(0, 0, 0);
 
 // Variables:
-const linePos = line.geometry.attributes.position;
+const linePos = line.line.geometry.attributes.position;
 const lineNodes = linePos.array;
 const sphere1XYZ = {
   x: 0,
@@ -109,6 +109,8 @@ function animate(time) {
 
   redSphere.uniforms.u_time.value += delta;
 
+  line.uniform.u_time.value += delta;
+
   directionalLight.position.set(Math.cos(r) * 10, 2, Math.sin(r) * 10);
 
   const index = 1;
@@ -123,12 +125,8 @@ function animate(time) {
     lineNodes[index + 2] + Math.sin(angle) * orbitRadius
   );
 
-  // Light
-  // directionalLight.position.setX(Math.sin(time / 1500));
-  // directionalLight.position.setY(Math.sin((time / 1000)));
-
-  // camera.position.setY(Math.sin(time / 20000) * 10);
-  // camera.position.setX(Math.sin(time / 20000) * 10);
+  camera.position.setY(Math.sin(time / 20000) * 10);
+  camera.position.setX(Math.sin(time / 20000) * 10);
 
   renderer.render(scene, camera);
 }
