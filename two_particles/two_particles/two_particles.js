@@ -1,6 +1,7 @@
 import { createSphere } from "./components/sphere";
 import { createLine } from "./components/line";
 import * as THREE from "three";
+import { deltaTime } from "three/tsl";
 
 // Setup -----------
 const width = window.innerWidth,
@@ -11,13 +12,13 @@ const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 
 // Sphere 1 --------
-const greySphere = createSphere(0x4b99e9, 30, 4);
+const greySphere = createSphere("blue", 30, 4);
 
 // Sphere 2 ---------
-const redSphere = createSphere(0xd74776, 30, 4);
+const redSphere = createSphere("red", 30, 4);
 
 // Sphere 3 ---------
-const tinySphere = createSphere(0xd74776, 10, 2);
+const tinySphere = createSphere("red", 10, 2);
 
 // Line -----------
 const line = createLine(0xf5f5f5);
@@ -26,7 +27,7 @@ const line = createLine(0xf5f5f5);
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
 directionalLight.position.set(0, 5, 10);
 
-scene.add(greySphere, redSphere, line, directionalLight);
+scene.add(greySphere.sphere, redSphere.sphere, line, directionalLight);
 
 renderer.setSize(width, height);
 
@@ -66,6 +67,8 @@ function oscillate2(time, range) {
 
 let r = Math.PI * 2;
 
+const clock = new THREE.Clock();
+
 function animate(time) {
   // Sphere1 XYZ:
   sphere1XYZ.x = oscillate((time * 0.79) / 2750, width / 17.4);
@@ -88,17 +91,23 @@ function animate(time) {
   linePos.needsUpdate = true; // important for line geom to appear in motion
 
   // Sphere 1: Grey Sphere: set to beginning of curve
-  greySphere.position.set(sphere2XYZ.x, sphere2XYZ.y, sphere2XYZ.z);
+  greySphere.sphere.position.set(sphere2XYZ.x, sphere2XYZ.y, sphere2XYZ.z);
 
   // Sphere 2: Red Sphere: set to end point of curve
-  redSphere.position.set(sphere1XYZ.x, sphere1XYZ.y, sphere1XYZ.z);
+  redSphere.sphere.position.set(sphere1XYZ.x, sphere1XYZ.y, sphere1XYZ.z);
 
-  greySphere.rotation.x = time / 2000;
-  redSphere.rotation.x = time / 2001;
-  greySphere.rotation.y = time / 2999;
-  redSphere.rotation.y = time / 1999;
-  greySphere.rotation.z = time / 1998;
-  redSphere.rotation.z = time / 2999;
+  greySphere.sphere.rotation.x = time / 2000;
+  redSphere.sphere.rotation.x = time / 2001;
+  greySphere.sphere.rotation.y = time / 2999;
+  redSphere.sphere.rotation.y = time / 1999;
+  greySphere.sphere.rotation.z = time / 1998;
+  redSphere.sphere.rotation.z = time / 2999;
+
+  const delta = clock.getDelta();
+
+  greySphere.uniforms.u_time.value += delta;
+
+  redSphere.uniforms.u_time.value += delta;
 
   directionalLight.position.set(Math.cos(r) * 10, 2, Math.sin(r) * 10);
 
@@ -108,7 +117,7 @@ function animate(time) {
 
   let angle = time / 1000;
 
-  tinySphere.position.set(
+  tinySphere.sphere.position.set(
     lineNodes[index] + Math.sin(angle) * orbitRadius,
     lineNodes[index + 1] + Math.sin(angle) * orbitRadius,
     lineNodes[index + 2] + Math.sin(angle) * orbitRadius
