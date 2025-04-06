@@ -35,6 +35,35 @@ directionalLight.position.set(0, 5, 10);
 // scene.environment = texture;
 // scene.background = texture;
 
+// Shader background?
+const bggeom = new THREE.PlaneGeometry(2, 2);
+const bgmat = new THREE.ShaderMaterial({
+  uniforms: {
+    uTime: { value: 0 },
+  },
+  vertexShader: `
+    void main(){
+      gl_Position = vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: `
+    uniform float uTime;
+    void main(){
+      vec2 uv = gl_FragCoord.xy / vec2(200.0, 10000.0);
+      float gradient = 0.02 + 0.9 * sin(uTime + uv.y * 10.0);
+      gl_FragColor = vec4(vec3(gradient, uv.y, 1.0 - uv.y), 1.0);
+    }
+  `,
+  depthWrite: false,
+});
+
+const bgScene = new THREE.Scene();
+const meshx = new THREE.Mesh(bggeom, bgmat);
+const bgCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+bgScene.add(meshx);
+
+// Original Scene:
 scene.add(
   greySphere.sphere,
   redSphere.sphere,
@@ -83,6 +112,9 @@ let r = Math.PI * 2;
 const clock = new THREE.Clock();
 
 function animate(time) {
+  // BG
+  bgmat.uniforms.uTime.value += 0.01;
+
   // Sphere1 XYZ:
   sphere1XYZ.x = oscillate((time * 0.79) / 2750, width / 17.4);
   sphere1XYZ.y = oscillate((time * 1) / 2750, height / 17.5);
@@ -148,6 +180,9 @@ function animate(time) {
   camera.position.setY(Math.sin(time / 20000) * 10);
   camera.position.setX(Math.sin(time / 20000) * 10);
 
+  renderer.autoClear = false;
+  renderer.clear();
+  renderer.render(bgScene, bgCam);
   renderer.render(scene, camera);
 }
 
