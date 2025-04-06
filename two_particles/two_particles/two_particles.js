@@ -17,9 +17,6 @@ const greySphere = createSphere("blue", 30, 4);
 // Sphere 2 ---------
 const redSphere = createSphere("red", 30, 4);
 
-// Sphere 3 ---------
-const tinySphere = createSphere("red", 10, 2);
-
 // Line -----------
 const line = createLine("0.5");
 const line2 = createLine("1.5");
@@ -28,6 +25,15 @@ const line3 = createLine("2.5");
 // ----------
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
 directionalLight.position.set(0, 5, 10);
+
+// Add texture to the scene
+// const loader = new THREE.TextureLoader();
+// const texture = loader.load("../texture2.jpg", () => {
+//   texture.mapping = THREE.EquirectangularReflectionMapping;
+// });
+
+// scene.environment = texture;
+// scene.background = texture;
 
 scene.add(
   greySphere.sphere,
