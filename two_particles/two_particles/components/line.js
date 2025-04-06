@@ -48,9 +48,9 @@ export function createLine(curl) {
 
         newPosition.y += curlAmount * sin(position.x * 0.4 + u_time)*2.0;
 
-        newPosition.x += curlAmount * cos(position.y * 0.3 + u_time)*2.0;
+        newPosition.x += curlAmount * cos(position.y * 0.3 + u_time)*1.9;
 
-        newPosition.z += curlAmount * cos(position.z * 0.2 + u_time)*2.0;
+        newPosition.z += curlAmount * cos(position.z * 0.2 + u_time)*2.1;
 
         gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
       }
@@ -61,7 +61,7 @@ export function createLine(curl) {
       uniform float u_glowIntensity;
 
       void main(){
-        float flicker = 0.4 + 01.5 * sin(u_time*(sin(u_time*0.8)*0.2));
+        float flicker = 0.4 + 1.5 * sin(u_time*(sin(u_time*0.5)*0.2));
         vec3 glowColor = u_color * flicker * u_glowIntensity;
 
         gl_FragColor = vec4(glowColor, 0.5);
