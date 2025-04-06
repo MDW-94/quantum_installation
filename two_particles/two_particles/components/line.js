@@ -3,7 +3,7 @@ import { CubicBezierCurve3, BufferGeometry, Line, Vector3, Color } from "three";
 import { uniform } from "three/tsl";
 import { ShaderMaterial } from "three/webgpu";
 
-export function createLine() {
+export function createLine(curl) {
   // const lineMaterial = new LineBasicMaterial({ color: colour });
 
   // const points = [];
@@ -43,7 +43,7 @@ export function createLine() {
       varying vec3 v_color;
 
       void main(){
-        float curlAmount = sin(u_time * 0.5);
+        float curlAmount = sin(u_time * ${curl});
         vec3 newPosition = position;
 
         newPosition.y += curlAmount * sin(position.x * 0.4 + u_time)*2.0;
@@ -64,7 +64,7 @@ export function createLine() {
         float flicker = 0.4 + 01.5 * sin(u_time*(sin(u_time*0.8)*0.2));
         vec3 glowColor = u_color * flicker * u_glowIntensity;
 
-        gl_FragColor = vec4(glowColor, 1.0);
+        gl_FragColor = vec4(glowColor, 0.5);
       }
     `,
     transparent: true,

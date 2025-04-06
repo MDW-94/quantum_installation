@@ -21,13 +21,22 @@ const redSphere = createSphere("red", 30, 4);
 const tinySphere = createSphere("red", 10, 2);
 
 // Line -----------
-const line = createLine();
+const line = createLine("0.5");
+const line2 = createLine("1.5");
+const line3 = createLine("2.5");
 
 // ----------
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
 directionalLight.position.set(0, 5, 10);
 
-scene.add(greySphere.sphere, redSphere.sphere, line.line, directionalLight);
+scene.add(
+  greySphere.sphere,
+  redSphere.sphere,
+  line.line,
+  line2.line,
+  line3.line,
+  directionalLight
+);
 
 renderer.setSize(width, height);
 
@@ -38,7 +47,11 @@ camera.lookAt(0, 0, 0);
 
 // Variables:
 const linePos = line.line.geometry.attributes.position;
+const linePos2 = line2.line.geometry.attributes.position;
+const linePos3 = line3.line.geometry.attributes.position;
 const lineNodes = linePos.array;
+const lineNodes2 = linePos2.array;
+const lineNodes3 = linePos3.array;
 const sphere1XYZ = {
   x: 0,
   y: 0,
@@ -46,12 +59,6 @@ const sphere1XYZ = {
 };
 
 const sphere2XYZ = {
-  x: 0,
-  y: 0,
-  z: 0,
-};
-
-const tinySphereXYZ = {
   x: 0,
   y: 0,
   z: 0,
@@ -86,9 +93,20 @@ function animate(time) {
     lineNodes[i] = THREE.MathUtils.lerp(sphere1XYZ.x, sphere2XYZ.x, t);
     lineNodes[i + 1] = THREE.MathUtils.lerp(sphere1XYZ.y, sphere2XYZ.y, t);
     lineNodes[i + 2] = THREE.MathUtils.lerp(sphere1XYZ.z, sphere2XYZ.z, t);
+
+    lineNodes2[i] = THREE.MathUtils.lerp(sphere1XYZ.x, sphere2XYZ.x, t);
+    lineNodes2[i + 1] = THREE.MathUtils.lerp(sphere1XYZ.y, sphere2XYZ.y, t);
+    lineNodes2[i + 2] = THREE.MathUtils.lerp(sphere1XYZ.z, sphere2XYZ.z, t);
+
+    lineNodes3[i] = THREE.MathUtils.lerp(sphere1XYZ.x, sphere2XYZ.x, t);
+    lineNodes3[i + 1] = THREE.MathUtils.lerp(sphere1XYZ.y, sphere2XYZ.y, t);
+    lineNodes3[i + 2] = THREE.MathUtils.lerp(sphere1XYZ.z, sphere2XYZ.z, t);
   }
 
   linePos.needsUpdate = true; // important for line geom to appear in motion
+
+  linePos2.needsUpdate = true;
+  linePos3.needsUpdate = true;
 
   // Sphere 1: Grey Sphere: set to beginning of curve
   greySphere.sphere.position.set(sphere2XYZ.x, sphere2XYZ.y, sphere2XYZ.z);
@@ -110,6 +128,8 @@ function animate(time) {
   redSphere.uniforms.u_time.value += delta;
 
   line.uniform.u_time.value += delta;
+  line2.uniform.u_time.value += delta;
+  line3.uniform.u_time.value += delta;
 
   directionalLight.position.set(Math.cos(r) * 10, 2, Math.sin(r) * 10);
 
@@ -118,12 +138,6 @@ function animate(time) {
   let orbitRadius = width / 1000;
 
   let angle = time / 1000;
-
-  tinySphere.sphere.position.set(
-    lineNodes[index] + Math.sin(angle) * orbitRadius,
-    lineNodes[index + 1] + Math.sin(angle) * orbitRadius,
-    lineNodes[index + 2] + Math.sin(angle) * orbitRadius
-  );
 
   camera.position.setY(Math.sin(time / 20000) * 10);
   camera.position.setX(Math.sin(time / 20000) * 10);
