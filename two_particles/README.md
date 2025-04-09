@@ -549,3 +549,15 @@ It can be used for textures, procedural materials, or visual effects.
 No matter how far apart you move them, they will stay connected."
 
 At such a microscopic level there still exists connection, even with distance. The 3D rendering above... (continue)
+
+Things to mention: linear interpolation, physics simulation, voronoi patterns (tessellation effect in the spheres) and independent sine/cosine animation sequences
+
+The particles represent a negative and a positive relationship, they need to coexist together. Each with it's own energy, traversing it's own path.
+
+<quote>
+Two particles intertwined. Born together. Perfectly correlated.
+
+At a microscopic level, there exists connection - no matter the distance. The 3D rendering above uses a series of animated sine and cosine motions to create this atomic dance. Linear interpolation threads undulating patterns into the space between.
+
+This connection can never be broken, for the energy within each particle tessellates forever.
+</quote>
