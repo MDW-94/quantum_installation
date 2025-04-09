@@ -12,15 +12,17 @@ const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 
 // Sphere 1 --------
-const greySphere = createSphere("blue", 30, 4);
+const greySphere = createSphere("blue", 70, 6);
 
 // Sphere 2 ---------
-const redSphere = createSphere("red", 30, 4);
+const redSphere = createSphere("red", 70, 6);
 
 // Line -----------
-const line = createLine("0.5");
-const line2 = createLine("1.5");
-const line3 = createLine("2.5");
+const line = createLine("0.59", 0.0);
+const line2 = createLine("1.59", 0.01);
+const line3 = createLine("2.58", 0.02);
+const line4 = createLine("0.57", 0.03);
+const line5 = createLine("1.56", 0.04);
 
 // ----------
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -39,7 +41,7 @@ directionalLight.position.set(0, 5, 10);
 const bggeom = new THREE.PlaneGeometry(2, 2);
 const bgmat = new THREE.ShaderMaterial({
   uniforms: {
-    uTime: { value: 0 },
+    uTime: { value: 0.1 },
   },
   vertexShader: `
     void main(){
@@ -49,9 +51,9 @@ const bgmat = new THREE.ShaderMaterial({
   fragmentShader: `
     uniform float uTime;
     void main(){
-      vec2 uv = gl_FragCoord.xy / vec2(200.0, 10000.0);
-      float gradient = 0.02 + 0.9 * sin(uTime + uv.y * 10.0);
-      gl_FragColor = vec4(vec3(gradient, uv.y, 1.0 - uv.y), 1.0);
+      vec2 uv = gl_FragCoord.xy / vec2(10.0, 10000.0);
+      float gradient = 0.005 + 6.5 * sin(uTime + uv.y * 15.0);
+      gl_FragColor = vec4(vec3(gradient*0.1, gradient*0.1, gradient*0.1), 1.0);
     }
   `,
   depthWrite: false,
@@ -70,6 +72,8 @@ scene.add(
   line.line,
   line2.line,
   line3.line,
+  line4.line,
+  line5.line,
   directionalLight
 );
 
@@ -77,16 +81,20 @@ renderer.setSize(width, height);
 
 document.body.appendChild(renderer.domElement);
 
-camera.position.set(0, 0, 75);
+camera.position.set(0, 0, 80);
 camera.lookAt(0, 0, 0);
 
 // Variables:
 const linePos = line.line.geometry.attributes.position;
 const linePos2 = line2.line.geometry.attributes.position;
 const linePos3 = line3.line.geometry.attributes.position;
+const linePos4 = line4.line.geometry.attributes.position;
+const linePos5 = line5.line.geometry.attributes.position;
 const lineNodes = linePos.array;
 const lineNodes2 = linePos2.array;
 const lineNodes3 = linePos3.array;
+const lineNodes4 = linePos4.array;
+const lineNodes5 = linePos5.array;
 const sphere1XYZ = {
   x: 0,
   y: 0,
@@ -139,12 +147,22 @@ function animate(time) {
     lineNodes3[i] = THREE.MathUtils.lerp(sphere1XYZ.x, sphere2XYZ.x, t);
     lineNodes3[i + 1] = THREE.MathUtils.lerp(sphere1XYZ.y, sphere2XYZ.y, t);
     lineNodes3[i + 2] = THREE.MathUtils.lerp(sphere1XYZ.z, sphere2XYZ.z, t);
+
+    lineNodes4[i] = THREE.MathUtils.lerp(sphere1XYZ.x, sphere2XYZ.x, t);
+    lineNodes4[i + 1] = THREE.MathUtils.lerp(sphere1XYZ.y, sphere2XYZ.y, t);
+    lineNodes4[i + 2] = THREE.MathUtils.lerp(sphere1XYZ.z, sphere2XYZ.z, t);
+
+    lineNodes5[i] = THREE.MathUtils.lerp(sphere1XYZ.x, sphere2XYZ.x, t);
+    lineNodes5[i + 1] = THREE.MathUtils.lerp(sphere1XYZ.y, sphere2XYZ.y, t);
+    lineNodes5[i + 2] = THREE.MathUtils.lerp(sphere1XYZ.z, sphere2XYZ.z, t);
   }
 
   linePos.needsUpdate = true; // important for line geom to appear in motion
 
   linePos2.needsUpdate = true;
   linePos3.needsUpdate = true;
+  linePos4.needsUpdate = true;
+  linePos5.needsUpdate = true;
 
   // Sphere 1: Grey Sphere: set to beginning of curve
   greySphere.sphere.position.set(sphere2XYZ.x, sphere2XYZ.y, sphere2XYZ.z);
@@ -168,6 +186,8 @@ function animate(time) {
   line.uniform.u_time.value += delta;
   line2.uniform.u_time.value += delta;
   line3.uniform.u_time.value += delta;
+  line4.uniform.u_time.value += delta;
+  line5.uniform.u_time.value += delta;
 
   directionalLight.position.set(Math.cos(r) * 10, 2, Math.sin(r) * 10);
 

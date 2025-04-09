@@ -3,7 +3,7 @@ import { CubicBezierCurve3, BufferGeometry, Line, Vector3, Color } from "three";
 import { uniform } from "three/tsl";
 import { ShaderMaterial } from "three/webgpu";
 
-export function createLine(curl) {
+export function createLine(curl, uTime) {
   // const lineMaterial = new LineBasicMaterial({ color: colour });
 
   // const points = [];
@@ -30,8 +30,9 @@ export function createLine(curl) {
 
   //Note: uniforms are not defined by convention, they're just variables that you pass in
   const uniform = {
-    u_time: { value: 0.0 },
+    u_time: { value: uTime },
     u_color: { value: new Color(0, 50, 200) },
+    // u_color: { value: new Color(230, 230, 230) },
     u_glowIntensity: { value: 3.0 },
   };
 
@@ -46,11 +47,11 @@ export function createLine(curl) {
         float curlAmount = sin(u_time * ${curl});
         vec3 newPosition = position;
 
-        newPosition.y += curlAmount * sin(position.x * 0.4 + u_time)*2.0;
+        newPosition.y += curlAmount * sin(position.x * 0.39 + u_time)*1.98;
 
-        newPosition.x += curlAmount * cos(position.y * 0.3 + u_time)*1.9;
+        newPosition.x += curlAmount * cos(position.y * 0.38 + u_time)*1.9;
 
-        newPosition.z += curlAmount * cos(position.z * 0.2 + u_time)*2.1;
+        newPosition.z += curlAmount * sin(position.z * 0.37 + u_time)*2.19;
 
         gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
       }
@@ -61,7 +62,7 @@ export function createLine(curl) {
       uniform float u_glowIntensity;
 
       void main(){
-        float flicker = 0.4 + 1.5 * sin(u_time*(sin(u_time*0.5)*0.2));
+        float flicker = 0.4 + 0.0 * sin(u_time*(sin(u_time*0.5)*0.2));
         vec3 glowColor = u_color * flicker * u_glowIntensity;
 
         gl_FragColor = vec4(glowColor, 0.5);
