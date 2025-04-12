@@ -1,31 +1,34 @@
-import * as THREE from "three";
-console.log("Script running...");
-import { Camera, Renderer, Scene } from "./utils/config";
+import { DirectionalLight } from "three";
+import { Camera, Renderer, myScene } from "./utils/config";
 import { Width, Height } from "./utils/global";
+import { createSphere } from "./components/objects/sphereObject";
+console.log("Script running...");
 
 // ---- Mesh/Objs:
-const box = new THREE.BoxGeometry(4, 4, 4);
-const greenMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-const mesh = new THREE.Mesh(box, greenMaterial);
+const sphere1 = createSphere();
 
 // ---- Light:
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+const directionalLight = new DirectionalLight(0xffffff, 1);
 
 // ---- Config:
 Renderer.setSize(Width, Height);
-Camera.position.set(0, 0, 25);
+Camera.position.set(0, 0, 30);
 Camera.lookAt(0, 0, 0);
-Scene.add(mesh, directionalLight);
+myScene.add(sphere1.mesh, directionalLight);
 document.body.appendChild(Renderer.domElement);
 
 // ---- Animiate:
 function animate(time) {
-  mesh.rotation.x = time / 5000;
-  mesh.rotation.y = time / 10000;
+  sphere1.mesh.position.set(
+    Math.sin((time * 0.1) / 50),
+    Math.sin((time * 0.01) / 50),
+    Math.sin((time * 0.12) / 50)
+  );
 
-  directionalLight.position.setY(time / 0.5);
+  directionalLight.position.setX(Math.sin((time * 0.01) / 5));
+  directionalLight.position.setZ(Math.sin((time * 0.01) / 5));
 
-  Renderer.render(Scene, Camera);
+  Renderer.render(myScene, Camera);
 }
 
 Renderer.setAnimationLoop(animate);
