@@ -9,14 +9,12 @@ Key Questions:
 - [Quantum Incubator](#quantum-incubator)
   - [Processing Sketches](#processing-sketches)
     - [References:](#references)
-    - [Sketch 1: Three.js](#sketch-1-threejs)
+    - [Sketch 1: Connection](#sketch-1-connection)
       - [Colours:](#colours)
       - [Geometries](#geometries)
     - [Sketch 2: Touchdesigner](#sketch-2-touchdesigner)
       - [Colours](#colours-1)
-    - [Sketch 3: Processing](#sketch-3-processing)
-    - [Sketch 4: Nannou](#sketch-4-nannou)
-    - [Sketch 5: ...](#sketch-5-)
+    - [Sketch 3: Complex Dimensions](#sketch-3-complex-dimensions)
   - [Bugs along the way:](#bugs-along-the-way)
     - [Three.js](#threejs)
 
@@ -32,7 +30,7 @@ Key Questions:
 
 <hr/>
 
-### Sketch 1: Three.js
+### Sketch 1: Connection
 
 <i>
 "Two particles intertwined.
@@ -89,11 +87,10 @@ Light-Yellow: #feffc7
 
 Pale-Black: #1f1f1f
 
-### Sketch 3: Processing
+### Sketch 3: Complex Dimensions
 
-### Sketch 4: Nannou
-
-### Sketch 5: ...
+<hr/>
+<hr/>
 
 ## Bugs along the way:
 

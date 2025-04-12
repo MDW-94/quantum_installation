@@ -1,4 +1,4 @@
-# Quantum Incubator
+# Quantum Incubator: Connection
 
 To run the projects:
 

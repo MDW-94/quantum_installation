@@ -1,0 +1,23 @@
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: black;
+}
+
+body {
+  box-sizing: border-box;
+  /* border: solid 5px teal; */
+
+  canvas {
+    margin: 0;
+    padding: 8px;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border-radius: 32px;
+  }
+}
