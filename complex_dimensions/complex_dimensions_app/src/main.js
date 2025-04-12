@@ -1,6 +1,6 @@
 import * as THREE from "three";
 console.log("Script running...");
-import * as Config from "./utils/config";
+import { Camera, Renderer, Scene } from "./utils/config";
 import { Width, Height } from "./utils/global";
 
 // ---- Mesh/Objs:
@@ -12,11 +12,11 @@ const mesh = new THREE.Mesh(box, greenMaterial);
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
 
 // ---- Config:
-Config.Renderer.setSize(Width, Height);
-Config.Camera.position.set(0, 0, 25);
-Config.Camera.lookAt(0, 0, 0);
-Config.Scene.add(mesh, directionalLight);
-document.body.appendChild(Config.Renderer.domElement);
+Renderer.setSize(Width, Height);
+Camera.position.set(0, 0, 25);
+Camera.lookAt(0, 0, 0);
+Scene.add(mesh, directionalLight);
+document.body.appendChild(Renderer.domElement);
 
 // ---- Animiate:
 function animate(time) {
@@ -25,7 +25,7 @@ function animate(time) {
 
   directionalLight.position.setY(time / 0.5);
 
-  Config.Renderer.render(Config.Scene, Config.Camera);
+  Renderer.render(Scene, Camera);
 }
 
-Config.Renderer.setAnimationLoop(animate);
+Renderer.setAnimationLoop(animate);
