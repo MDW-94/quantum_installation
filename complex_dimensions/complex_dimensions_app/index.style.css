@@ -10,7 +10,6 @@ html {
 
 body {
   box-sizing: border-box;
-  /* border: solid 5px teal; */
 
   canvas {
     margin: 0;
