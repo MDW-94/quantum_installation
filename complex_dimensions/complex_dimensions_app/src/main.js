@@ -16,7 +16,7 @@ const directionalLight = new DirectionalLight(0xffffff, 1);
 
 // ---- Config:
 Renderer.setSize(Width, Height);
-Camera.position.set(-200, 120, 120);
+Camera.position.set(0, 0, 200);
 Camera.lookAt(0, 0, 0);
 myScene.add(directionalLight);
 document.body.appendChild(Renderer.domElement);
@@ -28,37 +28,33 @@ spheres.forEach((item) => {
 const clock = new Clock();
 
 let sphereCounters = [];
-let xCounter = 0,
+let xCounter = -500,
   yCounter = 0,
   zCounter = 0;
 let orbitRadius = 100;
 
-function orbit() {}
+// function orbit() {}
 
 // ---- Animiate:
 function animate(time) {
+  const slowTime = clock.getDelta(); // delta = speed since last frame
   spheres.forEach((item, index) => {
+    sphereCounters.push(slowTime - index * 17.5);
     // item.mesh.position.set(
     //   Math.sin((time * 0.1) / 50) - index * 20,
     //   Math.sin((time * 0.01) / 50),
     //   Math.sin((time * 0.1) / 50) - index * 15
     // );
 
-    if (xCounter < 2000) {
-      xCounter += time * 0.0001;
-      yCounter += time * 0.0001;
-      zCounter += time * 0.0001;
+    if (sphereCounters[index] < 400) {
+      // yCounter - index * 10,
+      // zCounter - index * 10
+      item.mesh.position.set((sphereCounters[index] += slowTime * 100), 0, 0);
     } else {
-      xCounter = 0;
-      yCounter = 0;
-      zCounter = 0;
+      sphereCounters[index] = -500;
+      // yCounter = 0;
+      // zCounter = 0;
     }
-
-    item.mesh.position.set(
-      xCounter - index * 10,
-      yCounter - index * 10,
-      zCounter - index * 10
-    );
 
     item.mesh.material.uniforms.iTime.value = clock.getElapsedTime();
   });
