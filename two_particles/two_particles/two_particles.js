@@ -1,49 +1,42 @@
-import { createSphere } from "./components/sphere/sphere";
-import { createLine } from "./components/line/line";
-import * as THREE from "three";
-import { deltaTime } from "three/tsl";
-import { backgroundVertexShader } from "./components/background/bgVertexShader";
-import { backgroundFragmentShader } from "./components/background/bgFragmentShader";
+import { MathUtils } from "three";
 import { perspectiveCamera } from "./config/camera/perspectiveCamera";
 import { bgScene, newScene } from "./config/scene/scene";
+import { renderer } from "./config/renderer";
+import { bgCam } from "./components/background/bgCamera/bgCamera";
+import { bgMat, bgMesh } from "./components/background/bgMesh/bgMesh";
+import { directionalLight } from "./config/light/directionalLight";
+import { Height, Width, R, newClock } from "./config/global";
+import {
+  greySphere,
+  redSphere,
+  line,
+  line2,
+  line3,
+  line4,
+  line5,
+  linePos,
+  linePos2,
+  linePos3,
+  linePos4,
+  linePos5,
+  lineNodes,
+  lineNodes2,
+  lineNodes3,
+  lineNodes4,
+  lineNodes5,
+  sphere1XYZ,
+  sphere2XYZ,
+} from "./components";
 
 // Setup -----------
 const width = window.innerWidth,
   height = window.innerHeight,
   depth = 500;
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-
-// Sphere 1 --------
-const greySphere = createSphere("blue", 70, 6);
-
-// Sphere 2 ---------
-const redSphere = createSphere("red", 70, 6);
-
-// Line -----------
-const line = createLine("0.59", 0.0);
-const line2 = createLine("1.59", 0.01);
-const line3 = createLine("2.58", 0.02);
-const line4 = createLine("0.57", 0.03);
-const line5 = createLine("1.56", 0.04);
 
 // ----------
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
 directionalLight.position.set(0, 5, 10);
 
-const bggeom = new THREE.PlaneGeometry(2, 2);
-const bgmat = new THREE.ShaderMaterial({
-  uniforms: {
-    uTime: { value: 0.1 },
-  },
-  vertexShader: backgroundVertexShader(),
-  fragmentShader: backgroundFragmentShader(),
-  depthWrite: false,
-});
-
-const meshx = new THREE.Mesh(bggeom, bgmat);
-const bgCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-
-bgScene.add(meshx);
+bgScene.add(bgMesh);
 
 // Original Scene:
 newScene.add(
@@ -57,35 +50,10 @@ newScene.add(
   directionalLight
 );
 
-renderer.setSize(width, height);
-
+renderer.setSize(Width, Height);
 document.body.appendChild(renderer.domElement);
-
 perspectiveCamera.position.set(0, 0, 80);
 perspectiveCamera.lookAt(0, 0, 0);
-
-// Variables:
-const linePos = line.line.geometry.attributes.position;
-const linePos2 = line2.line.geometry.attributes.position;
-const linePos3 = line3.line.geometry.attributes.position;
-const linePos4 = line4.line.geometry.attributes.position;
-const linePos5 = line5.line.geometry.attributes.position;
-const lineNodes = linePos.array;
-const lineNodes2 = linePos2.array;
-const lineNodes3 = linePos3.array;
-const lineNodes4 = linePos4.array;
-const lineNodes5 = linePos5.array;
-const sphere1XYZ = {
-  x: 0,
-  y: 0,
-  z: 0,
-};
-
-const sphere2XYZ = {
-  x: 0,
-  y: 0,
-  z: 0,
-};
 
 function oscillate(time, range) {
   return Math.sin(time * Math.PI * 0.5) * (range / 2);
@@ -95,13 +63,9 @@ function oscillate2(time, range) {
   return Math.cos(time * Math.PI * 0.5) * (range / 2);
 }
 
-let r = Math.PI * 2;
-
-const clock = new THREE.Clock();
-
 function animate(time) {
   // BG
-  bgmat.uniforms.uTime.value += 0.01;
+  bgMat.uniforms.uTime.value += 0.01;
 
   // Sphere1 XYZ:
   sphere1XYZ.x = oscillate((time * 0.79) / 2750, width / 17.4);
@@ -116,25 +80,25 @@ function animate(time) {
   for (let i = 0; i < lineNodes.length; i += 3) {
     let t = i / lineNodes.length; // Normalized position (0 to 1)
 
-    lineNodes[i] = THREE.MathUtils.lerp(sphere1XYZ.x, sphere2XYZ.x, t);
-    lineNodes[i + 1] = THREE.MathUtils.lerp(sphere1XYZ.y, sphere2XYZ.y, t);
-    lineNodes[i + 2] = THREE.MathUtils.lerp(sphere1XYZ.z, sphere2XYZ.z, t);
+    lineNodes[i] = MathUtils.lerp(sphere1XYZ.x, sphere2XYZ.x, t);
+    lineNodes[i + 1] = MathUtils.lerp(sphere1XYZ.y, sphere2XYZ.y, t);
+    lineNodes[i + 2] = MathUtils.lerp(sphere1XYZ.z, sphere2XYZ.z, t);
 
-    lineNodes2[i] = THREE.MathUtils.lerp(sphere1XYZ.x, sphere2XYZ.x, t);
-    lineNodes2[i + 1] = THREE.MathUtils.lerp(sphere1XYZ.y, sphere2XYZ.y, t);
-    lineNodes2[i + 2] = THREE.MathUtils.lerp(sphere1XYZ.z, sphere2XYZ.z, t);
+    lineNodes2[i] = MathUtils.lerp(sphere1XYZ.x, sphere2XYZ.x, t);
+    lineNodes2[i + 1] = MathUtils.lerp(sphere1XYZ.y, sphere2XYZ.y, t);
+    lineNodes2[i + 2] = MathUtils.lerp(sphere1XYZ.z, sphere2XYZ.z, t);
 
-    lineNodes3[i] = THREE.MathUtils.lerp(sphere1XYZ.x, sphere2XYZ.x, t);
-    lineNodes3[i + 1] = THREE.MathUtils.lerp(sphere1XYZ.y, sphere2XYZ.y, t);
-    lineNodes3[i + 2] = THREE.MathUtils.lerp(sphere1XYZ.z, sphere2XYZ.z, t);
+    lineNodes3[i] = MathUtils.lerp(sphere1XYZ.x, sphere2XYZ.x, t);
+    lineNodes3[i + 1] = MathUtils.lerp(sphere1XYZ.y, sphere2XYZ.y, t);
+    lineNodes3[i + 2] = MathUtils.lerp(sphere1XYZ.z, sphere2XYZ.z, t);
 
-    lineNodes4[i] = THREE.MathUtils.lerp(sphere1XYZ.x, sphere2XYZ.x, t);
-    lineNodes4[i + 1] = THREE.MathUtils.lerp(sphere1XYZ.y, sphere2XYZ.y, t);
-    lineNodes4[i + 2] = THREE.MathUtils.lerp(sphere1XYZ.z, sphere2XYZ.z, t);
+    lineNodes4[i] = MathUtils.lerp(sphere1XYZ.x, sphere2XYZ.x, t);
+    lineNodes4[i + 1] = MathUtils.lerp(sphere1XYZ.y, sphere2XYZ.y, t);
+    lineNodes4[i + 2] = MathUtils.lerp(sphere1XYZ.z, sphere2XYZ.z, t);
 
-    lineNodes5[i] = THREE.MathUtils.lerp(sphere1XYZ.x, sphere2XYZ.x, t);
-    lineNodes5[i + 1] = THREE.MathUtils.lerp(sphere1XYZ.y, sphere2XYZ.y, t);
-    lineNodes5[i + 2] = THREE.MathUtils.lerp(sphere1XYZ.z, sphere2XYZ.z, t);
+    lineNodes5[i] = MathUtils.lerp(sphere1XYZ.x, sphere2XYZ.x, t);
+    lineNodes5[i + 1] = MathUtils.lerp(sphere1XYZ.y, sphere2XYZ.y, t);
+    lineNodes5[i + 2] = MathUtils.lerp(sphere1XYZ.z, sphere2XYZ.z, t);
   }
 
   linePos.needsUpdate = true; // important for line geom to appear in motion
@@ -157,7 +121,7 @@ function animate(time) {
   greySphere.sphere.rotation.z = time / 1998;
   redSphere.sphere.rotation.z = time / 2999;
 
-  const delta = clock.getDelta();
+  const delta = newClock.getDelta();
 
   greySphere.uniforms.u_time.value += delta;
 
@@ -169,7 +133,7 @@ function animate(time) {
   line4.uniform.u_time.value += delta;
   line5.uniform.u_time.value += delta;
 
-  directionalLight.position.set(Math.cos(r) * 10, 2, Math.sin(r) * 10);
+  directionalLight.position.set(Math.cos(R) * 10, 2, Math.sin(R) * 10);
 
   const index = 1;
 
