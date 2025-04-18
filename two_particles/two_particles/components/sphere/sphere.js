@@ -1,6 +1,6 @@
 import { SphereGeometry, Mesh, ShaderMaterial } from "three";
-import { sphereVertexShader } from "./sphereVertexShader";
-import { sphereFragmentShader } from "./sphereFragmentShader";
+import { sphereVertexShader } from "./shaders/sphereVertexShader";
+import { sphereFragmentShader } from "./shaders/sphereFragmentShader";
 
 export function createSphere(colorArg, size, radius) {
   const geometry = new SphereGeometry(radius, size, size);
