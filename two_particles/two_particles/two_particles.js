@@ -1,14 +1,16 @@
-import { createSphere } from "./components/sphere";
-import { createLine } from "./components/line";
+import { createSphere } from "./components/sphere/sphere";
+import { createLine } from "./components/line/line";
 import * as THREE from "three";
 import { deltaTime } from "three/tsl";
+import { backgroundVertexShader } from "./components/background/bgVertexShader";
+import { backgroundFragmentShader } from "./components/background/bgFragmentShader";
+import { perspectiveCamera } from "./config/camera/perspectiveCamera";
+import { bgScene, newScene } from "./config/scene/scene";
 
 // Setup -----------
 const width = window.innerWidth,
   height = window.innerHeight,
   depth = 500;
-const camera = new THREE.PerspectiveCamera(70, width / height, 0.01, 500);
-const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 
 // Sphere 1 --------
@@ -28,45 +30,23 @@ const line5 = createLine("1.56", 0.04);
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
 directionalLight.position.set(0, 5, 10);
 
-// Add texture to the scene
-// const loader = new THREE.TextureLoader();
-// const texture = loader.load("../texture2.jpg", () => {
-//   texture.mapping = THREE.EquirectangularReflectionMapping;
-// });
-
-// scene.environment = texture;
-// scene.background = texture;
-
-// Shader background?
 const bggeom = new THREE.PlaneGeometry(2, 2);
 const bgmat = new THREE.ShaderMaterial({
   uniforms: {
     uTime: { value: 0.1 },
   },
-  vertexShader: `
-    void main(){
-      gl_Position = vec4(position, 1.0);
-    }
-  `,
-  fragmentShader: `
-    uniform float uTime;
-    void main(){
-      vec2 uv = gl_FragCoord.xy / vec2(10.0, 10000.0);
-      float gradient = 0.005 + 6.5 * sin(uTime + uv.y * 15.0);
-      gl_FragColor = vec4(vec3(gradient*0.1, gradient*0.1, gradient*0.1), 1.0);
-    }
-  `,
+  vertexShader: backgroundVertexShader(),
+  fragmentShader: backgroundFragmentShader(),
   depthWrite: false,
 });
 
-const bgScene = new THREE.Scene();
 const meshx = new THREE.Mesh(bggeom, bgmat);
 const bgCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
 bgScene.add(meshx);
 
 // Original Scene:
-scene.add(
+newScene.add(
   greySphere.sphere,
   redSphere.sphere,
   line.line,
@@ -81,8 +61,8 @@ renderer.setSize(width, height);
 
 document.body.appendChild(renderer.domElement);
 
-camera.position.set(0, 0, 80);
-camera.lookAt(0, 0, 0);
+perspectiveCamera.position.set(0, 0, 80);
+perspectiveCamera.lookAt(0, 0, 0);
 
 // Variables:
 const linePos = line.line.geometry.attributes.position;
@@ -197,13 +177,13 @@ function animate(time) {
 
   let angle = time / 1000;
 
-  camera.position.setY(Math.sin(time / 20000) * 10);
-  camera.position.setX(Math.sin(time / 20000) * 10);
+  perspectiveCamera.position.setY(Math.sin(time / 20000) * 10);
+  perspectiveCamera.position.setX(Math.sin(time / 20000) * 10);
 
   renderer.autoClear = false;
   renderer.clear();
   renderer.render(bgScene, bgCam);
-  renderer.render(scene, camera);
+  renderer.render(newScene, perspectiveCamera);
 }
 
 renderer.setAnimationLoop(animate);

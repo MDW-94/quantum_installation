@@ -1,32 +1,8 @@
-import { SphereGeometry, Mesh, ShaderMaterial } from "three";
-
-export function createSphere(colorArg, size, radius) {
-  const geometry = new SphereGeometry(radius, size, size);
-  const uniforms = {
-    u_time: { value: 0.0 },
-    u_bFactor: { value: 2.0 },
-    u_rFactor: { value: 2.0 },
-    u_pcurveHandle: { value: 1.5 },
-  };
-
-  let material;
-
-  material = new ShaderMaterial({
-    uniforms: uniforms,
-    vertexShader: `
-      varying vec3 v_pos;
-  
-      void main() {
-        v_pos = position;
-        vec4 modelViewPosition = modelViewMatrix * vec4(position,1.0);
-        gl_Position = projectionMatrix * modelViewPosition;
-      }
-    `,
-    fragmentShader: `
+export const sphereFragmentShader = (colourArg) => `
         uniform float u_time;
         uniform float ${
-          (colorArg == "blue" && "u_bFactor") ||
-          (colorArg == "red" && "u_rFactor")
+          (colourArg == "blue" && "u_bFactor") ||
+          (colourArg == "red" && "u_rFactor")
         };
         uniform float u_pcurveHandle;
         varying vec3 v_pos;
@@ -71,21 +47,21 @@ export function createSphere(colorArg, size, radius) {
         vec3 mycolor = vec3(pow(res.x, 1.5));
   
         ${
-          (colorArg == "blue" && "float blue = mycolor.b * u_bFactor;") ||
-          (colorArg == "red" && "float red = mycolor.r * u_rFactor;")
+          (colourArg == "blue" && "float blue = mycolor.b * u_bFactor;") ||
+          (colourArg == "red" && "float red = mycolor.r * u_rFactor;")
         };
 
         ${
-          (colorArg == "blue" &&
+          (colourArg == "blue" &&
             "mycolor.b = blue*(1.0 - smoothstep(0.9,1.0,res.x));") ||
-          (colorArg == "red" &&
+          (colourArg == "red" &&
             "mycolor.r = red*(1.0 - smoothstep(0.9,1.0,res.x));")
         };
 
         ${
-          (colorArg == "blue" &&
+          (colourArg == "blue" &&
             "mycolor.r = pcurve(mycolor.r, 4.0, u_pcurveHandle);") ||
-          (colorArg == "red" &&
+          (colourArg == "red" &&
             "mycolor.b = pcurve(mycolor.b, 4.0, u_pcurveHandle);")
         };
   
@@ -95,14 +71,4 @@ export function createSphere(colorArg, size, radius) {
   
         gl_FragColor = vec4(mycolor, alpha);
       }
-    `,
-  });
-
-  const sphere = new Mesh(geometry, material);
-
-  return { sphere, uniforms };
-}
-
-// https://medium.com/geekculture/make-a-cool-plasma-ball-using-voronoi-effect-in-three-js-8a0477e3b745
-
-// https://blog.cjgammon.com/threejs-custom-shader-material/
+    `;

@@ -46,9 +46,11 @@ function animate(time) {
     //   Math.sin((time * 0.1) / 50) - index * 15
     // );
 
-    if (sphereCounters[index] < 400) {
+    if (sphereCounters[index] < 200) {
       // yCounter - index * 10,
       // zCounter - index * 10
+      item.mesh.position.set((sphereCounters[index] += slowTime * 100), 0, 0);
+    } else if (sphereCounters[index] > 200 && sphereCounters[index] < 400) {
       item.mesh.position.set((sphereCounters[index] += slowTime * 100), 0, 0);
     } else {
       sphereCounters[index] = -500;

@@ -130,14 +130,14 @@ console.log(points.length); // 51 ( 0 to 50)
 console.log(points[25]); // Roughly the midpoint of the curve
 ```
 
-![alt text](<Screenshot 2025-02-15 at 17.51.04.png>)
+![alt text](<notes/Screenshot 2025-02-15 at 17.51.04.png>)
 
 Here the points of the bezier curve are defined but the the animation function alters the final points of the curve, attaching them to the spheres:
-![alt text](<Screenshot 2025-02-15 at 18.03.40.png>)
+![alt text](<notes/Screenshot 2025-02-15 at 18.03.40.png>)
 
-![alt text](<Screenshot 2025-02-15 at 18.04.37.png>)
+![alt text](<notes/Screenshot 2025-02-15 at 18.04.37.png>)
 
-![alt text](<Screenshot 2025-02-15 at 18.04.49.png>)
+![alt text](<notes/Screenshot 2025-02-15 at 18.04.49.png>)
 
 So the curve still remain intact and unmoved in the center but there are stretch points between that curve and where the sphere start
 
@@ -538,11 +538,11 @@ It can be used for textures, procedural materials, or visual effects.
 
 ## Final Result:
 
-![alt text](<Screenshot 2025-04-09 at 21.24.26.png>)
+![alt text](<notes/Screenshot 2025-04-09 at 21.24.26.png>)
 
-![alt text](<Screenshot 2025-04-09 at 21.24.55.png>)
+![alt text](<notes/Screenshot 2025-04-09 at 21.24.55.png>)
 
-![alt text](<Screenshot 2025-04-09 at 21.25.22.png>)
+![alt text](<notes/Screenshot 2025-04-09 at 21.25.22.png>)
 
 "Two particles intertwined. Born together. Perfectly correlated.
 
