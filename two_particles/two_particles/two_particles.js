@@ -1,4 +1,4 @@
-import { MathUtils } from "three";
+import { MathUtils, Vector3 } from "three";
 import { perspectiveCamera } from "./config/camera/perspectiveCamera";
 import { bgScene, newScene } from "./config/scene/scene";
 import { renderer } from "./config/renderer";
@@ -28,6 +28,27 @@ import {
   sphere2XYZ,
 } from "./components";
 
+const socket = new WebSocket("ws://localhost:3000");
+
+let normXY = { x: 0, y: 0 };
+socket.addEventListener("message", (event) => {
+  const [rawX, rawY] = event.data.split(",").map(Number);
+
+  // Input normalisation and smoothing
+  normXY.x = (rawX - 512) / 512;
+  normXY.y = (rawY - 512) / 512;
+
+  // console.log(`X: ${x}, Y: ${y}`);
+  // console.log(`normX: ${normX}, normY: ${normY}`);
+  clearTimeout(timeoutId);
+  resetTimeout();
+});
+
+// Timeout variables
+let timeoutId;
+const timeoutDuration = 2000; // Timeout duration in milliseconds (e.g., 2 seconds)
+let defaultPosition = new Vector3(0, 0, 30); // Default starting position of the sphere
+
 // Setup -----------
 const width = window.innerWidth,
   height = window.innerHeight,
@@ -52,7 +73,7 @@ newScene.add(
 
 renderer.setSize(Width, Height);
 document.body.appendChild(renderer.domElement);
-perspectiveCamera.position.set(0, 0, 80);
+perspectiveCamera.position.set(0, 0, 100);
 perspectiveCamera.lookAt(0, 0, 0);
 
 function oscillate(time, range) {
@@ -63,13 +84,44 @@ function oscillate2(time, range) {
   return Math.cos(time * Math.PI * 0.5) * (range / 2);
 }
 
+// Function to reset the timeout
+function resetTimeout() {
+  // Reset sphere position to default position after timeout
+  timeoutId = setTimeout(() => {
+    console.log(
+      "No joystick input detected, returning to default flight pattern."
+    );
+    sphere1XYZ.position.set(
+      defaultPosition.x,
+      defaultPosition.y,
+      defaultPosition.z
+    ); // Reset to default position
+    // Optionally, apply some other default behavior, like moving along a path or rotating:
+    // sphere.rotation.x += 0.01;
+    // sphere.rotation.y += 0.01;
+  }, timeoutDuration);
+}
+
+const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+const minPos = -Width / 40;
+const maxPos = Width / 40;
+
 function animate(time) {
   // BG
   bgMat.uniforms.uTime.value += 0.01;
 
-  // Sphere1 XYZ:
+  // Sphere1 XYZ: Default flight
   sphere1XYZ.x = oscillate((time * 0.79) / 2750, width / 17.4);
   sphere1XYZ.y = oscillate((time * 1) / 2750, height / 17.5);
+
+  // Joystick input:
+  // sphere1XYZ.x += normXY.x * 0.4;
+  // sphere1XYZ.y += normXY.y * 0.4;
+  // sphere1XYZ.x = clamp(sphere1XYZ.x, minPos, maxPos);
+  // sphere1XYZ.y = clamp(sphere1XYZ.y, minPos, maxPos);
+  // console.log("normX:", normX, "normY:", normY);
+
   sphere1XYZ.z = oscillate((time * 1.19) / 2750, depth / 12.5);
 
   // Sphere2 XYZ:
