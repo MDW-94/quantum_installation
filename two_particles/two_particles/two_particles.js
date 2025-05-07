@@ -28,26 +28,73 @@ import {
   sphere2XYZ,
 } from "./components";
 
-const socket = new WebSocket("ws://localhost:3000");
+//const socket = new WebSocket("ws://localhost:3000");
+const socket2 = new WebSocket("ws://localhost:8085");
+
+socket2.onopen = () => {
+  console.log('WebSocket connection established');
+  //socket2.send('Hello, server!');
+};
+
+if (socket2.readyState === WebSocket.OPEN) {
+  socket2.send('Hello, server!');
+} else {
+  console.warn('WebSocket is not open. ReadyState is:', socket2.readyState);
+}
 
 let normXY = { x: 0, y: 0 };
-socket.addEventListener("message", (event) => {
-  const [rawX, rawY] = event.data.split(",").map(Number);
+// let lastLogTime = 0;
+// const throttleInterval = 200; // milliseconds, adjust to your needs (200ms means logs every 200ms)
 
-  // Input normalisation and smoothing
-  normXY.x = (rawX - 512) / 512;
-  normXY.y = (rawY - 512) / 512;
+if(!socket2.onmessage){
+  socket2.onmessage = function(event){
+    const json = JSON.parse(event.data);
+    // console.log(json);
+    const { x: rawX, y: rawY } = json;
+    normXY.x = rawX;
+    normXY.y = rawY;
+  
+    //  // Current time in milliseconds
+    //  const currentTime = Date.now();
+  
+    //  // Only log if enough time has passed since the last log
+    //  if (currentTime - lastLogTime > throttleInterval) {
+    //    console.log(`Received x: ${rawX}, y: ${rawY}`);
+    //    lastLogTime = currentTime; // Update last log time
+    //  }
+  
+    // Input normalisation and smoothing
+    // normXY.x = (rawX - 512) / 512;
+    // normXY.y = (rawY - 512) / 512;
+  
+    // console.log(`X: ${x}, Y: ${y}`);
+    // console.log(`normX: ${normX}, normY: ${normY}`);
+    clearTimeout(timeoutId);
+    resetTimeout();
+  }
 
-  // console.log(`X: ${x}, Y: ${y}`);
-  // console.log(`normX: ${normX}, normY: ${normY}`);
-  clearTimeout(timeoutId);
-  resetTimeout();
-});
+}
 
-// Timeout variables
-let timeoutId;
-const timeoutDuration = 2000; // Timeout duration in milliseconds (e.g., 2 seconds)
-let defaultPosition = new Vector3(0, 0, 30); // Default starting position of the sphere
+
+socket2.onclose = () => {
+  console.log('WebSocket connection closed');
+};
+
+
+
+// socket2.addEventListener("message", (event) => {
+//   const [rawX, rawY] = event.data.split(",").map(Number);
+
+//   // Input normalisation and smoothing
+//   normXY.x = (rawX - 512) / 512;
+//   normXY.y = (rawY - 512) / 512;
+
+//   // console.log(`X: ${x}, Y: ${y}`);
+//   // console.log(`normX: ${normX}, normY: ${normY}`);
+//   clearTimeout(timeoutId);
+//   resetTimeout();
+// });
+
 
 // Setup -----------
 const width = window.innerWidth,
@@ -84,7 +131,13 @@ function oscillate2(time, range) {
   return Math.cos(time * Math.PI * 0.5) * (range / 2);
 }
 
-// Function to reset the timeout
+// Timeout variables
+let timeoutId;
+const timeoutDuration = 2000; // Timeout duration in milliseconds (e.g., 2 seconds)
+let defaultPosition = new Vector3(0, 0, 30); // Default starting position of the sphere
+
+
+// // Function to reset the timeout
 function resetTimeout() {
   // Reset sphere position to default position after timeout
   timeoutId = setTimeout(() => {
@@ -112,17 +165,19 @@ function animate(time) {
   bgMat.uniforms.uTime.value += 0.01;
 
   // Sphere1 XYZ: Default flight
-  sphere1XYZ.x = oscillate((time * 0.79) / 2750, width / 17.4);
-  sphere1XYZ.y = oscillate((time * 1) / 2750, height / 17.5);
+  // sphere1XYZ.x = oscillate((time * 0.79) / 2750, width / 17.4);
+  // sphere1XYZ.y = oscillate((time * 1) / 2750, height / 17.5);
 
   // Joystick input:
   // sphere1XYZ.x += normXY.x * 0.4;
   // sphere1XYZ.y += normXY.y * 0.4;
+  sphere1XYZ.x += normXY.x;
+  sphere1XYZ.y += normXY.y;
   // sphere1XYZ.x = clamp(sphere1XYZ.x, minPos, maxPos);
   // sphere1XYZ.y = clamp(sphere1XYZ.y, minPos, maxPos);
   // console.log("normX:", normX, "normY:", normY);
 
-  sphere1XYZ.z = oscillate((time * 1.19) / 2750, depth / 12.5);
+  // sphere1XYZ.z = oscillate((time * 1.19) / 2750, depth / 12.5);
 
   // Sphere2 XYZ:
   sphere2XYZ.x = oscillate2((time * 0.8) / 2749, width / 17.5) * -1;
@@ -195,6 +250,8 @@ function animate(time) {
 
   perspectiveCamera.position.setY(Math.sin(time / 20000) * 10);
   perspectiveCamera.position.setX(Math.sin(time / 20000) * 10);
+
+  // resetTimeout()
 
   renderer.autoClear = false;
   renderer.clear();
