@@ -42,17 +42,18 @@ if (socket2.readyState === WebSocket.OPEN) {
   console.warn('WebSocket is not open. ReadyState is:', socket2.readyState);
 }
 
-let normXY = { x: 0, y: 0 };
+let normXYZ = { x: 0, y: 0, z: 0 };
 // let lastLogTime = 0;
 // const throttleInterval = 200; // milliseconds, adjust to your needs (200ms means logs every 200ms)
 
 if(!socket2.onmessage){
   socket2.onmessage = function(event){
     const json = JSON.parse(event.data);
-    // console.log(json);
-    const { x: rawX, y: rawY } = json;
-    normXY.x = rawX;
-    normXY.y = rawY;
+    console.log(json);
+    const { x: rawX, y: rawY, z } = json;
+    normXYZ.x = Math.round(rawX);
+    normXYZ.y = Math.round(rawY);
+    normXYZ.z = z;
   
     //  // Current time in milliseconds
     //  const currentTime = Date.now();
@@ -79,21 +80,6 @@ if(!socket2.onmessage){
 socket2.onclose = () => {
   console.log('WebSocket connection closed');
 };
-
-
-
-// socket2.addEventListener("message", (event) => {
-//   const [rawX, rawY] = event.data.split(",").map(Number);
-
-//   // Input normalisation and smoothing
-//   normXY.x = (rawX - 512) / 512;
-//   normXY.y = (rawY - 512) / 512;
-
-//   // console.log(`X: ${x}, Y: ${y}`);
-//   // console.log(`normX: ${normX}, normY: ${normY}`);
-//   clearTimeout(timeoutId);
-//   resetTimeout();
-// });
 
 
 // Setup -----------
@@ -171,8 +157,9 @@ function animate(time) {
   // Joystick input:
   // sphere1XYZ.x += normXY.x * 0.4;
   // sphere1XYZ.y += normXY.y * 0.4;
-  sphere1XYZ.x += normXY.x;
-  sphere1XYZ.y += normXY.y;
+  sphere1XYZ.x += normXYZ.x;
+  sphere1XYZ.y += normXYZ.y;
+  sphere1XYZ.z += normXYZ.z
   // sphere1XYZ.x = clamp(sphere1XYZ.x, minPos, maxPos);
   // sphere1XYZ.y = clamp(sphere1XYZ.y, minPos, maxPos);
   // console.log("normX:", normX, "normY:", normY);
