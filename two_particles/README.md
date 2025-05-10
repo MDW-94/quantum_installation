@@ -561,3 +561,46 @@ At a microscopic level, there exists connection - no matter the distance. The 3D
 
 This connection can never be broken, for the energy within each particle tessellates forever.
 </quote>
+
+
+Websocket Server
+```js
+const Max = require('max-api');
+const { send } = require('process');
+const http = require('http');
+const WebSocket = require('ws');
+
+const server = http.createServer((req, res) => {
+    // Handle HTTP requests here
+  });
+
+const wss = new WebSocket.Server({server});
+
+server.listen(8085, () => {
+    console.log('Server is listening on ws://localhost:8085');
+  });
+
+Max.outlet("WebSocket server started");
+Max.outlet('WebSocket server started on ws:localhost:8085');
+
+wss.on('connection', ws => {
+    ws.on('message', message => {
+		console.log('received: %s', message);
+        Max.outlet("Received from client: " + message);
+    });
+
+	Max.addHandler('controller', (x,y,z,a,b) => {
+		Max.post(`Received controller values -> x: ${x}, y: ${y}`);
+		const data = JSON.stringify({x,y,z,a,b});
+        for(const client of wss.clients){
+            if(client.readyState === WebSocket.OPEN){
+                client.send(data);
+            }
+        }
+	});
+});
+
+wss.on('error', (error) => {
+    console.error('WebSocket error:', error);
+  });
+```

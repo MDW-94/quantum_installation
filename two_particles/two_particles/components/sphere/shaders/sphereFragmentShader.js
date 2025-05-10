@@ -68,7 +68,11 @@ export const sphereFragmentShader = (colourArg) => `
         mycolor.g = pcurve(mycolor.g, 4.0, u_pcurveHandle);
   
         float alpha = 1.0 - smoothstep(0.9, 1.7, res.x);
-  
+        
+        if(alpha == 0.0){
+          discard;
+        }
+
         gl_FragColor = vec4(mycolor, alpha);
       }
     `;

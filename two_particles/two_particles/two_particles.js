@@ -1,11 +1,11 @@
-import { MathUtils, Vector3 } from "three";
+import { MathUtils, Clock } from "three";
 import { perspectiveCamera } from "./config/camera/perspectiveCamera";
 import { bgScene, newScene } from "./config/scene/scene";
 import { renderer } from "./config/renderer";
 import { bgCam } from "./components/background/bgCamera/bgCamera";
 import { bgMat, bgMesh } from "./components/background/bgMesh/bgMesh";
 import { directionalLight } from "./config/light/directionalLight";
-import { Height, Width, R, newClock } from "./config/global";
+import { Height, Width, R, newClock, Depth, Canvas } from "./config/global";
 import {
   greySphere,
   redSphere,
@@ -43,49 +43,32 @@ if (socket2.readyState === WebSocket.OPEN) {
 }
 
 let normXYZ = { x: 0, y: 0, z: 0 };
-// let lastLogTime = 0;
-// const throttleInterval = 200; // milliseconds, adjust to your needs (200ms means logs every 200ms)
+let normXYZ2 = { a: 0, b: 0, c: 0 };
 
 if(!socket2.onmessage){
   socket2.onmessage = function(event){
     const json = JSON.parse(event.data);
-    console.log(json);
-    const { x: rawX, y: rawY, z } = json;
-    normXYZ.x = Math.round(rawX);
-    normXYZ.y = Math.round(rawY);
-    normXYZ.z = z;
-  
-    //  // Current time in milliseconds
-    //  const currentTime = Date.now();
-  
-    //  // Only log if enough time has passed since the last log
-    //  if (currentTime - lastLogTime > throttleInterval) {
-    //    console.log(`Received x: ${rawX}, y: ${rawY}`);
-    //    lastLogTime = currentTime; // Update last log time
-    //  }
-  
-    // Input normalisation and smoothing
-    // normXY.x = (rawX - 512) / 512;
-    // normXY.y = (rawY - 512) / 512;
-  
-    // console.log(`X: ${x}, Y: ${y}`);
-    // console.log(`normX: ${normX}, normY: ${normY}`);
+    sphereNotControlled = false;
+    // console.log(json);
+    const { x: rawX, y: rawY, z: rawZ, a, b, c } = json;
+    normXYZ.x = Math.round(rawX,0 );
+    normXYZ.y = Math.round(rawY, 0);
+    normXYZ.z = Math.round(rawZ, 0);
+    normXYZ2.a = Math.round(a, 0);
+    normXYZ2.b = Math.round(b, 0);
+    normXYZ2.c = Math.round(c, 0);
+
+
     clearTimeout(timeoutId);
     resetTimeout();
+    clearTimeout(timeoutId2)
+    resetFlight();
   }
-
 }
-
 
 socket2.onclose = () => {
   console.log('WebSocket connection closed');
 };
-
-
-// Setup -----------
-const width = window.innerWidth,
-  height = window.innerHeight,
-  depth = 500;
 
 // ----------
 directionalLight.position.set(0, 5, 10);
@@ -119,8 +102,12 @@ function oscillate2(time, range) {
 
 // Timeout variables
 let timeoutId;
-const timeoutDuration = 2000; // Timeout duration in milliseconds (e.g., 2 seconds)
-let defaultPosition = new Vector3(0, 0, 30); // Default starting position of the sphere
+const timeoutDuration = 5000; // Timeout duration in milliseconds (e.g., 2 seconds)
+let defaultPosition = {
+  x:0,
+  y:0,
+  z:0
+}
 
 
 // // Function to reset the timeout
@@ -128,48 +115,100 @@ function resetTimeout() {
   // Reset sphere position to default position after timeout
   timeoutId = setTimeout(() => {
     console.log(
-      "No joystick input detected, returning to default flight pattern."
+      "No joystick input detected, returning to 0,0,0."
     );
-    sphere1XYZ.position.set(
-      defaultPosition.x,
-      defaultPosition.y,
-      defaultPosition.z
-    ); // Reset to default position
-    // Optionally, apply some other default behavior, like moving along a path or rotating:
-    // sphere.rotation.x += 0.01;
-    // sphere.rotation.y += 0.01;
+    sphere1XYZ.x = defaultPosition.x + Width/ 50;
+    sphere1XYZ.y = defaultPosition.y;
+    sphere1XYZ.z = defaultPosition.z;
+    sphere2XYZ.x = defaultPosition.x - Width/ 50;
+    sphere2XYZ.y = defaultPosition.y;
+    sphere2XYZ.z = defaultPosition.z;
   }, timeoutDuration);
 }
 
-const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+let timeoutId2;
+const timeoutDuration2 = 10000;
 
-const minPos = -Width / 40;
-const maxPos = Width / 40;
+const minPos = {
+  x: -Width / 14,
+  y: -Height / 14,
+  z: -Depth + 100,
+  dynamicX: 0
+}
+
+const maxPos = {
+  x: Width / 12.5,
+  y: Height/ 14,
+  z: Depth/7,
+  dynamicX: 0
+}
+
+sphere1XYZ.x += Width / 50;
+sphere2XYZ.x -= Width / 50;
+
+let sphereNotControlled = true;
+
+function resetFlight() {
+  // Reset sphere position to default position after timeout
+  timeoutId2 = setTimeout(() => {
+    console.log(
+      "returning to default flight pattern."
+    );
+    sphereNotControlled = true;
+  
+  }, timeoutDuration2);
+}
+
+window.addEventListener("resize", () => {
+  let width = window.innerWidth;
+  let height = window.innerHeight;
+
+  perspectiveCamera.aspect = width / height;
+  perspectiveCamera.updateProjectionMatrix();
+
+  renderer.setSize(width, height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+})
+
+window.addEventListener("dblclick", () => {
+  if(!document.fullscreenElement){
+    Canvas.requestFullscreen();
+    console.log("Fullscreen open")
+  } else {
+    document.exitFullscreen();
+    console.log("Fullscreen closed")
+  }
+})
 
 function animate(time) {
   // BG
   bgMat.uniforms.uTime.value += 0.01;
 
-  // Sphere1 XYZ: Default flight
-  // sphere1XYZ.x = oscillate((time * 0.79) / 2750, width / 17.4);
-  // sphere1XYZ.y = oscillate((time * 1) / 2750, height / 17.5);
+  if(sphereNotControlled){
+    sphere1XYZ.x = oscillate((time * 0.79) / 2750, Width / 17.4);
+    sphere1XYZ.y = oscillate((time * 1) / 2750, Height / 17.5);
+    sphere1XYZ.z = oscillate((time * 1.19) / 2750, Depth / 12.5);
+  
+    // Sphere2 XYZ:
+    sphere2XYZ.x = oscillate2((time * 0.8) / 2749, Width / 17.5) * -1;
+    sphere2XYZ.y = oscillate2((time * 0.9) / 2751, Height / 16) * -1;
+    sphere2XYZ.z = oscillate2((time * 1.09) / 2751, Depth / 12.4) * -1;
+  } else {
+      // sphere1XYZ.x = MathUtils.clamp(sphere1XYZ.x + normXYZ.x * 0.8, minPos.dynamicX, maxPos.dynamicX);
+      // sphere1XYZ.y = MathUtils.clamp(sphere1XYZ.y + normXYZ.y * 0.8, minPos.y, maxPos.y);
+      sphere1XYZ.z = MathUtils.clamp(sphere1XYZ.z + normXYZ.z * 0.8, minPos.z, maxPos.z);
+      
+      sphere1XYZ.x += normXYZ.x * 0.8;
+      sphere1XYZ.y += normXYZ.y * 0.8;
+      // sphere1XYZ.z += normXYZ.z * 0.8;
 
-  // Joystick input:
-  // sphere1XYZ.x += normXY.x * 0.4;
-  // sphere1XYZ.y += normXY.y * 0.4;
-  sphere1XYZ.x += normXYZ.x;
-  sphere1XYZ.y += normXYZ.y;
-  sphere1XYZ.z += normXYZ.z
-  // sphere1XYZ.x = clamp(sphere1XYZ.x, minPos, maxPos);
-  // sphere1XYZ.y = clamp(sphere1XYZ.y, minPos, maxPos);
-  // console.log("normX:", normX, "normY:", normY);
+      sphere2XYZ.z = MathUtils.clamp(sphere2XYZ.z + normXYZ2.c * 0.8, minPos.z, maxPos.z);
+      
+      sphere2XYZ.x += normXYZ2.a * 0.8;
+      sphere2XYZ.y += normXYZ2.b * 0.8;
+      // sphere2XYZ.z += normXYZ2.c * 0.8;
+  }
 
-  // sphere1XYZ.z = oscillate((time * 1.19) / 2750, depth / 12.5);
-
-  // Sphere2 XYZ:
-  sphere2XYZ.x = oscillate2((time * 0.8) / 2749, width / 17.5) * -1;
-  sphere2XYZ.y = oscillate2((time * 0.9) / 2751, height / 16) * -1;
-  sphere2XYZ.z = oscillate2((time * 1.09) / 2751, depth / 12.4) * -1;
 
   for (let i = 0; i < lineNodes.length; i += 3) {
     let t = i / lineNodes.length; // Normalized position (0 to 1)
@@ -196,16 +235,15 @@ function animate(time) {
   }
 
   linePos.needsUpdate = true; // important for line geom to appear in motion
-
   linePos2.needsUpdate = true;
   linePos3.needsUpdate = true;
   linePos4.needsUpdate = true;
   linePos5.needsUpdate = true;
 
-  // Sphere 1: Grey Sphere: set to beginning of curve
+  // Sphere 1: Grey Sphere: set to beginning of line
   greySphere.sphere.position.set(sphere2XYZ.x, sphere2XYZ.y, sphere2XYZ.z);
 
-  // Sphere 2: Red Sphere: set to end point of curve
+  // Sphere 2: Red Sphere: set to end point of line
   redSphere.sphere.position.set(sphere1XYZ.x, sphere1XYZ.y, sphere1XYZ.z);
 
   greySphere.sphere.rotation.x = time / 2000;
@@ -229,16 +267,8 @@ function animate(time) {
 
   directionalLight.position.set(Math.cos(R) * 10, 2, Math.sin(R) * 10);
 
-  const index = 1;
-
-  let orbitRadius = width / 1000;
-
-  let angle = time / 1000;
-
   perspectiveCamera.position.setY(Math.sin(time / 20000) * 10);
   perspectiveCamera.position.setX(Math.sin(time / 20000) * 10);
-
-  // resetTimeout()
 
   renderer.autoClear = false;
   renderer.clear();
