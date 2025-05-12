@@ -14,7 +14,7 @@ export function createSphere() {
     200 / 255,
     40 / 255
   );
-  const box = new SphereGeometry(4, 40, 40); // 4 radius, 40 widthSegments, 40 heightSegments
+  const box = new SphereGeometry(5, 40, 40); // 4 radius, 40 widthSegments, 40 heightSegments
   // const uniforms = {
   //   iTime: { value: 0 },
   //   iResolution: { value: new Vector2(Width, Height) },
@@ -42,7 +42,13 @@ export function createSphere() {
   //     }
   //     `,
   // });
-  const material = new MeshPhongMaterial();
+  const material = new MeshPhongMaterial({
+    color: 0xdb063d, // Base color
+    // emissive: 0xdb7c02, // Glow color
+    emissive: 0x16f29b, // Glow color
+    emissiveIntensity: 1, // Glow strength
+    shininess: 75, // Optional: add specular highlights
+  });
   const mesh = new Mesh(box, material);
   return { mesh, material };
 }
