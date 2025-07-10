@@ -52,3 +52,5 @@ export function createSphere() {
   const mesh = new Mesh(box, material);
   return { mesh, material };
 }
+
+// https://www.color-hex.com/color-palette/1032994
