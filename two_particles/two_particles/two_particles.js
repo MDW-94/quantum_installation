@@ -27,8 +27,61 @@ import {
   sphere1XYZ,
   sphere2XYZ,
 } from "./components";
+import * as Tone from "tone";
 
 const socket2 = new WebSocket("ws://localhost:8085");
+
+let gamepadIndex = null;
+let controllerState = [
+  { x: 0, y: 0, z: 0 },
+  { x: 0, y: 0, z: 0 },
+];
+
+const synthA = new Tone.FMSynth().toDestination();
+const synthB = new Tone.AMSynth().toDestination();
+const player = new Tone.Player("./audio/sample1.mp3").toDestination();
+const now = Tone.now();
+
+async function playSample1() {
+  await Tone.start();
+  player.start();
+}
+
+window.addEventListener("gamepadconnected", (e) => {
+  gamepadIndex = e.gamepad.index;
+  console.log("Gamepad connected:", e.gamepad.id);
+  requestAnimationFrame(readGamepad);
+});
+
+function readGamepad() {
+  const gamepads = navigator.getGamepads();
+
+  for (let i = 0; i < gamepads.length; i++) {
+    const gp = gamepads[i];
+    if (!gp) continue;
+
+    sphereNotControlled = false;
+    controllerState[i].x = gp.axes[0];
+    controllerState[i].y = gp.axes[1];
+    controllerState[i].z = gp.axes[3];
+
+    // console.log(gp.axes[3]);
+    // if (Math.round(gp.axes[3]) > 0 || Math.round(gp.axes[3]) < 0) {
+    //   console.log("trigger");
+    //   // synthA.triggerAttackRelease("C2");
+    //   playSample1();
+    // } else {
+    //   // synthA.triggerRelease();
+    // }
+    // Buttons
+    gp.buttons.forEach((b, index) => {
+      if (b.pressed) console.log(`Gamepad ${i} button ${index} pressed`);
+    });
+  }
+
+  requestAnimationFrame(readGamepad);
+}
+// Adaption: two usb controllers, log data from them then update normXYZ objs to receive input based on controller input
 
 socket2.onopen = () => {
   console.log("WebSocket connection established");
@@ -40,61 +93,63 @@ if (socket2.readyState === WebSocket.OPEN) {
   console.warn("WebSocket is not open. ReadyState is:", socket2.readyState);
 }
 
-let normXYZ = { x: 0, y: 0, z: 0 };
-let normXYZ2 = { x: 0, y: 0, z: 0 };
+document.addEventListener("keydown", async function (event) {
+  // await Tone.start();
 
-document.addEventListener("keydown", function (event) {
+  console.log("audio is ready");
+
   console.log(event);
   // moveObj = event;
   sphereNotControlled = false;
   switch (event.key) {
     case "a":
       console.log("1: move left");
-      normXYZ.x = -1;
+      // samplerA.triggerAttack("C4", now);
+      controllerState[0].x = -1;
       break;
     case "d":
       console.log("1: move right");
-      normXYZ.x = 1;
+      controllerState[0].x = 1;
       break;
     case "w":
       console.log("1: move up");
-      normXYZ.y = 1;
+      controllerState[0].y = 1;
       break;
     case "x":
       console.log("1: move down");
-      normXYZ.y = -1;
+      controllerState[0].y = -1;
       break;
     case "q":
       console.log("1: move back");
-      normXYZ.z = -1;
+      controllerState[0].z = -1;
       break;
     case "e":
       console.log("1: move forward");
-      normXYZ.z = 1;
+      controllerState[0].z = 1;
       break;
     case "j":
       console.log("2:move left");
-      normXYZ2.x = -1;
+      controllerState[1].x = -1;
       break;
     case "l":
       console.log("2:move right");
-      normXYZ2.x = 1;
+      controllerState[1].x = 1;
       break;
     case "i":
       console.log("2:move up");
-      normXYZ2.y = 1;
+      controllerState[1].y = 1;
       break;
     case "m":
       console.log("2:move down");
-      normXYZ2.y = -1;
+      controllerState[1].y = -1;
       break;
     case "u":
       console.log("2:move back");
-      normXYZ2.z = -1;
+      controllerState[1].z = -1;
       break;
     case "o":
       console.log("2:move forward");
-      normXYZ2.z = 1;
+      controllerState[1].z = 1;
       break;
   }
   clearTimeout(timeoutId);
@@ -105,12 +160,13 @@ document.addEventListener("keydown", function (event) {
 
 document.addEventListener("keyup", function (event) {
   console.log("release key");
-  normXYZ.x = 0;
-  normXYZ.y = 0;
-  normXYZ.z = 0;
-  normXYZ2.x = 0;
-  normXYZ2.y = 0;
-  normXYZ2.z = 0;
+  controllerState[0].x = 0;
+  controllerState[0].y = 0;
+  controllerState[0].z = 0;
+  controllerState[1].x = 0;
+  controllerState[1].y = 0;
+  controllerState[1].z = 0;
+  // samplerA.triggerRelease("C4");
 });
 
 if (!socket2.onmessage || moveObj != null) {
@@ -119,12 +175,12 @@ if (!socket2.onmessage || moveObj != null) {
     sphereNotControlled = false;
     // console.log(json);
     const { x: rawX, y: rawY, z: rawZ, a, b, c } = json;
-    normXYZ.x = Math.round(rawX, 0);
-    normXYZ.y = Math.round(rawY, 0);
-    normXYZ.z = Math.round(rawZ, 0);
-    normXYZ2.x = Math.round(a, 0);
-    normXYZ2.y = Math.round(b, 0);
-    normXYZ2.z = Math.round(c, 0);
+    controllerState[0].x = Math.round(rawX, 0);
+    controllerState[0].y = Math.round(rawY, 0);
+    controllerState[0].z = Math.round(rawZ, 0);
+    controllerState[1].x = Math.round(a, 0);
+    controllerState[1].y = Math.round(b, 0);
+    controllerState[1].z = Math.round(c, 0);
 
     clearTimeout(timeoutId);
     resetTimeout();
@@ -254,22 +310,22 @@ function animate(time) {
     sphere2XYZ.z = oscillate2((time * 1.09) / 2751, Depth / 12.4) * -1;
   } else {
     sphere1XYZ.z = MathUtils.clamp(
-      sphere1XYZ.z + normXYZ.z * 0.8,
+      sphere1XYZ.z + controllerState[0].z * 0.8,
       minPos.z,
       maxPos.z
     );
 
-    sphere1XYZ.x += normXYZ.x * 0.8;
-    sphere1XYZ.y += normXYZ.y * 0.8;
+    sphere1XYZ.x += controllerState[0].x * 0.8;
+    sphere1XYZ.y += controllerState[0].y * 0.8;
 
     sphere2XYZ.z = MathUtils.clamp(
-      sphere2XYZ.z + normXYZ2.x * 0.8,
+      sphere2XYZ.z + controllerState[1].x * 0.8,
       minPos.z,
       maxPos.z
     );
 
-    sphere2XYZ.x += normXYZ2.y * 0.8;
-    sphere2XYZ.y += normXYZ2.z * 0.8;
+    sphere2XYZ.x += controllerState[1].y * 0.8;
+    sphere2XYZ.y += controllerState[1].z * 0.8;
   }
 
   for (let i = 0; i < lineNodes.length; i += 3) {

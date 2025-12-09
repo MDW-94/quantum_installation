@@ -3,7 +3,8 @@
     "start": "npx vite"
   },
   "dependencies": {
-    "three": "^0.172.0"
+    "three": "^0.172.0",
+    "tone": "^15.1.22"
   },
   "devDependencies": {
     "vite": "^6.0.11"
