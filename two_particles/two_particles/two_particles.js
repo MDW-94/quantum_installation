@@ -37,15 +37,15 @@ let controllerState = [
   { x: 0, y: 0, z: 0 },
 ];
 
-const synthA = new Tone.FMSynth().toDestination();
-const synthB = new Tone.AMSynth().toDestination();
-const player = new Tone.Player("./audio/sample1.mp3").toDestination();
-const now = Tone.now();
+// const synthA = new Tone.FMSynth().toDestination();
+// const synthB = new Tone.AMSynth().toDestination();
+// const player = new Tone.Player("./audio/sample1.mp3").toDestination();
+// const now = Tone.now();
 
-async function playSample1() {
-  await Tone.start();
-  player.start();
-}
+// async function playSample1() {
+//   await Tone.start();
+//   player.start();
+// }
 
 window.addEventListener("gamepadconnected", (e) => {
   gamepadIndex = e.gamepad.index;
