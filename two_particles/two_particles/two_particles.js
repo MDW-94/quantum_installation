@@ -115,7 +115,7 @@ document.addEventListener("keydown", async function (event) {
       console.log("1: move up");
       controllerState[0].y = 1;
       break;
-    case "x":
+    case "s":
       console.log("1: move down");
       controllerState[0].y = -1;
       break;
@@ -139,7 +139,7 @@ document.addEventListener("keydown", async function (event) {
       console.log("2:move up");
       controllerState[1].y = 1;
       break;
-    case "m":
+    case "k":
       console.log("2:move down");
       controllerState[1].y = -1;
       break;
@@ -207,7 +207,7 @@ newScene.add(
   line3.line,
   line4.line,
   line5.line,
-  directionalLight
+  directionalLight,
 );
 
 renderer.setSize(Width, Height);
@@ -312,7 +312,7 @@ function animate(time) {
     sphere1XYZ.z = MathUtils.clamp(
       sphere1XYZ.z + controllerState[0].z * 0.8,
       minPos.z,
-      maxPos.z
+      maxPos.z,
     );
 
     sphere1XYZ.x += controllerState[0].x * 0.8;
@@ -321,7 +321,7 @@ function animate(time) {
     sphere2XYZ.z = MathUtils.clamp(
       sphere2XYZ.z + controllerState[1].x * 0.8,
       minPos.z,
-      maxPos.z
+      maxPos.z,
     );
 
     sphere2XYZ.x += controllerState[1].y * 0.8;
