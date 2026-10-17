@@ -7,6 +7,7 @@
   - [Setup](#setup)
   - [Controls](#controls)
   - [Audio (Web feature TBC)](#audio-web-feature-tbc)
+  - [Notes:](#notes)
 
 ## Information
 
@@ -72,3 +73,9 @@ o - backwards
 ## Audio (Web feature TBC)
 
 Without Max/MSP and Ableton running the audio samples will not play. I will be working on a fix for the browser whereby the movement audio samples will be triggered like they were in the exhibition.
+
+## Notes:
+
+- Future adaptation of the game TBC
+- Use of Unity or a dedicated framework for v2
+- Focuse on further sound design in the future
