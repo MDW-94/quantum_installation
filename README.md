@@ -12,7 +12,7 @@
 
 Connection is an interactive game where two players take control of a pair of joined particles, drifting endlessly in a void.
 
-The game was built using a combination of THREE.js, Max/MSP, Ableton Live, Express.js running locally on the Arcade Unit provided by [Soundplay Projects, Glasgow](https://www.soundplayprojects.com/about-us-meet-the-team/).
+I built the game using a combination of THREE.js, Max/MSP, Ableton Live, Express.js running locally on the Arcade Unit provided by [Soundplay Projects, Glasgow](https://www.soundplayprojects.com/about-us-meet-the-team/).
 
 The installation was showcased at [Many Studios, Glasgow](https://www.manystudios.co.uk/) for a Quantum Technologies, public incubator funded by the University of Glasgow. The incubator was in an attempt to bring the wonders of qunatum technology into the public space through a partnership with local art communities - in an effort to increase public awareness of quantum science and current research that is ongoing.
 
