@@ -78,4 +78,6 @@ Without Max/MSP and Ableton running the audio samples will not play. I will be w
 
 - Future adaptation of the game TBC
 - Use of Unity or a dedicated framework for v2
-- Focuse on further sound design in the future
+- Focus on further sound design in the future
+
+![alt text](images/q5.webp)
